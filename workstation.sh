@@ -142,10 +142,10 @@ main() {
 
     case $choise in
         "1")
-            docker start "$CONTAINER_NAME"
+            docker start "$CONTAINER_NAME" > /dev/null
             ;;
         "2")
-            docker stop "$CONTAINER_NAME"
+            docker stop "$CONTAINER_NAME" > /dev/null
             ;;
         "3")
             docker stop "$CONTAINER_NAME" > /dev/null
