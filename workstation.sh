@@ -78,7 +78,7 @@ ws_pkgs() {
     ws_cmd_root apt upgrade -y
 
     # -- Tools -- #
-    ws_cmd_root apt install -y curl git gpg
+    ws_cmd_root apt install -y btop curl git gpg
 
     # -- Shell -- #
     ws_cmd_root apt install -y zsh
