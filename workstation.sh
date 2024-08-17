@@ -11,6 +11,7 @@ ws_cmd_root() {
     docker exec -e "DEBIAN_FRONTEND=noninteractive" -u root:root "$CONTAINER_NAME" "$@"
 }
 
+# Runs command as user in container
 ws_cmd_user() {
     docker exec -u "$DEFAULT_USER:$DEFAULT_USER" "$CONTAINER_NAME" "$@"
 }
@@ -96,12 +97,15 @@ ws_pkgs() {
     ws_cp "$SCRIPT_DIR/desktop/VSCodium.desktop" "$DEFAULT_HOME/Desktop"
 
     # -- Programming lang -- #
-    ws_cmd_root apt install -y build-essential php-cli php-xdebug python3 golang valac meson
+    ws_cmd_root apt install -y build-essential php-cli php-xdebug python3 golang valac
 
     ws_cmd_root curl -fsSL https://deb.nodesource.com/setup_22.x -o /tmp/nodesource_setup.sh
     ws_cmd_root bash /tmp/nodesource_setup.sh
     ws_cmd_root apt install -y nodejs
     ws_cmd_root npm install --global yarn
+
+    # -- Build tools -- #
+    ws_cmd_root apt install -y meson
 
     # -- DB -- #
     ws_cmd_root apt install -y mariadb-server
@@ -148,9 +152,11 @@ main() {
             docker stop "$CONTAINER_NAME" > /dev/null
             ;;
         "3")
-            docker stop "$CONTAINER_NAME" > /dev/null
-            docker container rm "$CONTAINER_NAME" > /dev/null
-            ws_install
+            if whiptail --title "https://atareao.es" --yesno "Do you want to continue? This action is PERMANENT!" 0 0; then
+                docker stop "$CONTAINER_NAME" > /dev/null
+                docker container rm "$CONTAINER_NAME" > /dev/null
+                ws_install
+            fi
             ;;
     esac
 }
