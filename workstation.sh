@@ -6,6 +6,11 @@ DEFAULT_USER="headless"
 DEFAULT_HOME="/home/$DEFAULT_USER"
 CONTAINER_NAME="workstation"
 
+# Menu options
+MENU_UP="up"
+MENU_DOWN="down"
+MENU_RESET="reset"
+
 # Runs command as root in container
 ws_cmd_root() {
     docker exec -e "DEBIAN_FRONTEND=noninteractive" -u root:root "$CONTAINER_NAME" "$@"
@@ -111,6 +116,7 @@ ws_pkgs() {
     ws_cmd_root apt install -y mariadb-server
 }
 
+# Fully installs container
 ws_install() {
     echo "Creating container..."
     ws_setup
@@ -118,6 +124,47 @@ ws_install() {
     ws_pkgs
     docker restart "$CONTAINER_NAME" > /dev/null
     echo "Container ready to go!"
+}
+
+# Converts input from interactive and non interactive modes
+menu_handler() {
+    local choise
+    choise="$1"
+
+    case $choise in
+        "$MENU_UP")
+            docker start "$CONTAINER_NAME" > /dev/null
+            ;;
+        "$MENU_DOWN")
+            docker stop "$CONTAINER_NAME" > /dev/null
+            ;;
+        "$MENU_RESET")
+            if whiptail --title "Workstation" --yesno "Do you want to continue? This action is PERMANENT!" 0 0; then
+                docker stop "$CONTAINER_NAME" > /dev/null
+                docker container rm "$CONTAINER_NAME" > /dev/null
+                ws_install
+            fi
+            ;;
+    esac
+}
+
+# Interactive menu using whiptail
+interactive() {
+    local choise
+    choise=$(
+    whiptail --title "Workstation" --menu "Pick a subsection" 0 0 0 \
+    	"$MENU_UP" "Start container" \
+        "$MENU_DOWN" "Stop container" \
+        "$MENU_RESET" "Reset container" \
+        3>&2 2>&1 1>&3
+    )
+
+    menu_handler "$choise"
+}
+
+# Non-interactive mode from arg
+non_interactive() {
+    menu_handler "$1"
 }
 
 main() {
@@ -134,31 +181,12 @@ main() {
         exit 0
     fi
 
-    # Start - Stop controls
-    local choise
-    choise=$(
-    whiptail --title "Workstation" --menu "Pick a subsection" 0 0 0 \
-    	"1" "Start container" \
-        "2" "Stop container" \
-        "3" "Reset container" \
-        3>&2 2>&1 1>&3
-    )
-
-    case $choise in
-        "1")
-            docker start "$CONTAINER_NAME" > /dev/null
-            ;;
-        "2")
-            docker stop "$CONTAINER_NAME" > /dev/null
-            ;;
-        "3")
-            if whiptail --title "https://atareao.es" --yesno "Do you want to continue? This action is PERMANENT!" 0 0; then
-                docker stop "$CONTAINER_NAME" > /dev/null
-                docker container rm "$CONTAINER_NAME" > /dev/null
-                ws_install
-            fi
-            ;;
-    esac
+    # If 1st arg exists run non-interative
+    if [[ "$#" -ne 1 ]]; then
+        interactive
+    else
+        non_interactive "$1"
+    fi
 }
 
-main
+main "$@"
