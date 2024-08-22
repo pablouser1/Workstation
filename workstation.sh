@@ -68,7 +68,7 @@ ws_setup() {
     fi
 
     # Change sudo password
-    ws_cp "$SCRIPT_DIR/scripts/sudo.sh" "/tmp/sudo.sh"
+    ws_cp "$SCRIPT_DIR/installers/sudo.sh" "/tmp/sudo.sh"
     ws_cmd_root bash /tmp/sudo.sh "$DEFAULT_USER" "$password"
 }
 
@@ -83,12 +83,12 @@ ws_pkgs() {
 
     # -- Shell -- #
     ws_cmd_root apt install -y zsh
-    ws_cp "$SCRIPT_DIR/scripts/oh-my-zsh.sh" "/tmp/oh-my-zsh.sh"
+    ws_cp "$SCRIPT_DIR/installers/oh-my-zsh.sh" "/tmp/oh-my-zsh.sh"
     ws_cmd_user bash /tmp/oh-my-zsh.sh
     ws_cmd_root chsh "$DEFAULT_USER" -s /usr/bin/zsh
 
     # -- VSCodium -- #
-    ws_cp "$SCRIPT_DIR/scripts/vscodium.sh" "/tmp/vscodium.sh"
+    ws_cp "$SCRIPT_DIR/installers/vscodium.sh" "/tmp/vscodium.sh"
     ws_cmd_root bash /tmp/vscodium.sh
     ws_cmd_root apt update
     ws_cmd_root apt install -y codium
