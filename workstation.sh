@@ -126,7 +126,7 @@ ws_install() {
     echo "Container ready to go!"
 }
 
-# Converts input from interactive and non interactive modes
+# Common action handler
 menu_handler() {
     local choise
     choise="$1"
