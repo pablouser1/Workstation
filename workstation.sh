@@ -67,7 +67,7 @@ ws_setup() {
     # Copies id_rsa if exists
     if [[ -f "$HOME/.ssh/id_rsa" ]]; then
         echo "id_rsa detected, copying to container"
-        ws_cmd_root mkdir "$DEFAULT_HOME/.ssh"
+        ws_cmd_user mkdir "$DEFAULT_HOME/.ssh"
         ws_cp "$HOME/.ssh/id_rsa" "$DEFAULT_HOME/.ssh"
         ws_cp "$HOME/.ssh/id_rsa.pub" "$DEFAULT_HOME/.ssh"
     fi
