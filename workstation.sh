@@ -50,7 +50,7 @@ ws_setup() {
         # Exposed ports
         -p "127.0.0.1:36901:6901"
         # Exposed volumes
-        -v "./docs:/home/headless/Documents"
+        -v "$SCRIPT_DIR/docs:/home/headless/Documents"
         # Password for VNC
         -e "VNC_PW=$password"
         # Host and container name
