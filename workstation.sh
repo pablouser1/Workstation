@@ -79,6 +79,8 @@ ws_setup() {
 
 # Install external packages
 ws_pkgs() {
+    # Adding backports
+    ws_cp "$SCRIPT_DIR/conf/apt/backports.list" "/etc/apt/sources.list.d"
     # Refresh deps first
     ws_cmd_root apt update
     ws_cmd_root apt upgrade -y
@@ -102,7 +104,8 @@ ws_pkgs() {
     ws_cp "$SCRIPT_DIR/desktop/VSCodium.desktop" "$DEFAULT_HOME/Desktop"
 
     # -- Programming lang -- #
-    ws_cmd_root apt install -y build-essential php-cli php-xdebug python3 golang valac
+    ws_cmd_root apt install -y build-essential php-cli php-xdebug python3 valac
+    ws_cmd_root apt install -t bookworm-backports -y golang-go
 
     ws_cmd_root curl -fsSL https://deb.nodesource.com/setup_22.x -o /tmp/nodesource_setup.sh
     ws_cmd_root bash /tmp/nodesource_setup.sh
